@@ -21,7 +21,7 @@ def real_articles():
     arts = {}
     with open(os.path.join(HERE, "data", "products.csv"), newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            lvl = row["salsify:data_inheritance_hierarchy_level_id"].strip()
+            lvl = row["level"].strip()
             arts.setdefault(row["RECORD_ID"].strip().lower(), lvl)
     return arts
 
@@ -32,7 +32,7 @@ def load_export(path):
         r = csv.reader(f); h = next(r)
         idcol = 0
         for i, c in enumerate(h):
-            if c.strip().lower() in ("record_id", "salsify:id", "id"):
+            if c.strip().lower() in ("record_id", "id"):
                 idcol = i; break
         for row in r:
             if not row or not row[idcol].strip():

@@ -7,7 +7,7 @@ silently charges in will hit the landmines; a good one surfaces them and asks.
 
 ## The data model (what's actually going on)
 
-- `products.csv` is a 4-level tree via `salsify:parent_id` + `…hierarchy_level_id`:
+- `products.csv` is a 4-level tree via `parent_id` + `level`:
   `master_model ($) → season → article (+) → sku`. **Images belong on the article.**
 - Image filenames encode the join info: `DSC_<code>_<view>_<pic>_<name>.png`.
   - `<code>` = the article's base code (article code **without** the trailing `+`).

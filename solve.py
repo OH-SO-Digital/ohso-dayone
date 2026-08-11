@@ -45,7 +45,7 @@ def load_articles():
     seen, arts = set(), {}
     with open(os.path.join(HERE, "data", "products.csv"), newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            if row["salsify:data_inheritance_hierarchy_level_id"].strip() != "article":
+            if row["level"].strip() != "article":
                 continue
             rid = row["RECORD_ID"].strip()
             key = rid.lower()

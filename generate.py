@@ -7,7 +7,21 @@ Run:  python3 generate.py
 Out:  data/products.csv  data/mapping.json  data/images/*.png (+ a couple non-images)
 """
 import csv, json, os, random, textwrap
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
+
+
+def _font(size):
+    for p in ("/System/Library/Fonts/Supplemental/Arial.ttf",
+              "/System/Library/Fonts/Helvetica.ttc",
+              "/Library/Fonts/Arial.ttf"):
+        try:
+            return ImageFont.truetype(p, size)
+        except Exception:
+            pass
+    try:
+        return ImageFont.load_default(size=size)      # Pillow >=10 scalable default
+    except TypeError:
+        return ImageFont.load_default()
 
 random.seed(7)
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -41,16 +55,28 @@ BG = {"GHO": (238, 238, 240), "MOD": (215, 230, 245), "PLP": (245, 235, 210),
       "BEA": (235, 220, 235), "PDF": (250, 220, 220), "TIF": (220, 250, 220)}
 
 
-def make_image(path, lines, bg):
-    im = Image.new("RGB", (600, 600), bg)
+F_TITLE, F_BODY, F_SLOT = _font(46), _font(30), _font(64)
+
+
+def make_image(path, name, base, view, pic, bg):
+    W = H = 800
+    im = Image.new("RGB", (W, H), bg)
     d = ImageDraw.Draw(im)
-    d.rectangle([8, 8, 591, 591], outline=(120, 120, 120), width=3)
-    y = 120
-    for i, ln in enumerate(lines):
-        for wrapped in textwrap.wrap(ln, 34) or [""]:
-            d.text((40, y), wrapped, fill=(20, 20, 20))
-            y += 46 if i == 0 else 34
-        y += 8
+    d.rectangle([10, 10, W - 11, H - 11], outline=(90, 90, 90), width=4)
+    # header bar with the pic type
+    d.rectangle([10, 10, W - 11, 90], fill=(60, 60, 70))
+    d.text((34, 30), f"{pic}", font=_font(44), fill=(255, 255, 255))
+    # centered big slot label (the key info: view_pic)
+    slot = f"{view}_{pic}"
+    tw = d.textlength(slot, font=F_SLOT)
+    d.text(((W - tw) / 2, 150), slot, font=F_SLOT, fill=(25, 25, 30))
+    # article name (wrapped) + id
+    y = 300
+    for wrapped in textwrap.wrap(name, 26)[:3]:
+        d.text((40, y), wrapped, font=F_TITLE, fill=(20, 20, 20)); y += 60
+    y += 20
+    d.text((40, y), f"ID  {base}", font=F_BODY, fill=(70, 70, 70)); y += 44
+    d.text((40, y), f"view {view}   pic {pic}", font=F_BODY, fill=(70, 70, 70))
     im.save(path)
 
 
@@ -60,12 +86,11 @@ def code(prefix, n):
 
 def main():
     prod_rows = []
-    # header mirrors a trimmed Salsify export
+    # header mirrors a trimmed product-catalogue export
     header = ["RECORD_ID", "RECORD_NAME", "ARTICLE_NAME", "PRODUCT_CODE",
-              "TAXONOMY", "COLOR", "SIZE", "salsify:parent_id",
-              "salsify:data_inheritance_hierarchy_level_id"]
+              "TAXONOMY", "COLOR", "SIZE", "parent_id", "level"]
 
-    images = []          # (filename, lines, pic, bg)
+    images = []          # (filename, name, base, view, pic, bg)
     articles_meta = []   # for pitfalls / interviewer notes
     art_counter = 1000
     corrupt = {"case_mismatch": [], "whitespace": [], "zeropad": [], "orphan": [],
@@ -138,12 +163,11 @@ def main():
                 if art_counter == 1005 and view == "1":
                     fview = "01"; corrupt["zeropad"].append(acode)                 # zero-pad view
                 fn = f"DSC_{fcode}_{fview}_{pic}_{aname.split()[0]}.png"
-                lines = [aname, f"ID: {base}", f"view={view}  pic={pic}", f"tax={tax}"]
-                images.append((fn, lines, pic, BG[pic]))
+                images.append((fn, aname, base, view, pic, BG[pic]))
                 # planted: duplicate slot (same code/view/pic, different file) for one article
                 if art_counter == 1009 and vi == 0:
                     images.append((f"DSC_{base}_{view}_{pic}_{aname.split()[0]}-alt.png",
-                                   lines + ["(DUPLICATE SLOT)"], pic, BG[pic]))
+                                   aname, base, view, pic, BG[pic]))
                     corrupt["dup_slot"].append(acode)
 
     # planted: duplicate product row differing only by case
@@ -155,7 +179,7 @@ def main():
     # planted: orphan images (codes with no product)
     for oc in ["ZZ9999001", "ZZ9999002", "zz9999003"]:
         images.append((f"DSC_{oc}_0_GHO_Ghostproduct.png",
-                       [f"Orphan {oc}", f"ID: {oc}", "view=0 pic=GHO", "tax=?"], "GHO", BG["GHO"]))
+                       f"Ghost Product {oc}", oc, "0", "GHO", BG["GHO"]))
         corrupt["orphan"].append(oc)
 
     # planted: non-image files mixed into the images pile
@@ -164,7 +188,7 @@ def main():
         f.write("%PDF-1.4 fake certificate not an image\n")
     # a fake .tif (just a renamed png-ish blob)
     make_image(os.path.join(IMG_DIR, "DSC_OD1002_0_GHO_bigfile.tif"),
-               ["I claim to be a TIFF", "but Salsify will choke", "on my raw size"], BG["TIF"])
+               "I claim to be a TIFF", "OD1002", "0", "GHO", BG["TIF"])
 
     # write products.csv
     with open(os.path.join(HERE, "data", "products.csv"), "w", newline="") as f:
@@ -173,8 +197,8 @@ def main():
         w.writerows(prod_rows)
 
     # render images
-    for fn, lines, pic, bg in images:
-        make_image(os.path.join(IMG_DIR, fn), lines, bg)
+    for fn, name, base, view, pic, bg in images:
+        make_image(os.path.join(IMG_DIR, fn), name, base, view, pic, bg)
 
     # mapping.json — simplified 3 properties, with a planted typo + a null property
     def order(*slots):
