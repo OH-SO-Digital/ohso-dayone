@@ -1,0 +1,126 @@
+{
+ "main_image": {
+  "100100": {
+   "order": [
+    "0_GHO"
+   ],
+   "fallbacks": {
+    "0_GHO": [
+     "3_GHO",
+     "0_MOD"
+    ]
+   }
+  },
+  "100200": {
+   "order": [
+    "0_GHO"
+   ],
+   "fallbacks": {
+    "0_GHO": [
+     "3_GHO",
+     "0_MOD"
+    ]
+   }
+  },
+  "200100": {
+   "order": [
+    "0_GHO"
+   ],
+   "fallbacks": {
+    "0_GHO": [
+     "3_GHO",
+     "0_MOD"
+    ]
+   }
+  },
+  "300100": {
+   "order": [
+    "0_GHO"
+   ],
+   "fallbacks": {
+    "0_GHO": [
+     "3_GHO",
+     "0_MOD"
+    ]
+   }
+  },
+  "default": {
+   "order": [
+    "0_GHO"
+   ],
+   "fallbacks": {
+    "0_GHO": [
+     "3_GHO"
+    ]
+   }
+  }
+ },
+ "gallery": {
+  "100100": {
+   "order": [
+    "0_GHO",
+    "1_GHO",
+    "2_GHO",
+    "D1_GHO",
+    "0_MOD"
+   ]
+  },
+  "100200": {
+   "order": [
+    "0_GHO",
+    "1_GHO",
+    "2_GHO",
+    "D1_GHO",
+    "0_MOD"
+   ]
+  },
+  "200100": {
+   "order": [
+    "0_GHO",
+    "1_GHO",
+    "D1",
+    "BEA",
+    "2_GHO"
+   ]
+  },
+  "300100": {
+   "order": [
+    "0_GHO",
+    "1_GHO",
+    "2_GHO",
+    "D1_GHO",
+    "0_MOD"
+   ]
+  },
+  "default": {
+   "order": [
+    "0_GHO",
+    "1_GHO",
+    "2_GHO"
+   ]
+  }
+ },
+ "plp_cards": {
+  "100100": {
+   "order": [
+    "0_PLP"
+   ]
+  },
+  "100200": {
+   "order": [
+    "0_PLP"
+   ]
+  },
+  "200100": {
+   "order": [
+    "0_PLP"
+   ]
+  },
+  "300100": {
+   "order": [
+    "0_PLP"
+   ]
+  }
+ },
+ "hero_video": null
+}
