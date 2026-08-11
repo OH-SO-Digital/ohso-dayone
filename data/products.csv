@@ -1,4 +1,4 @@
-RECORD_ID,RECORD_NAME,ARTICLE_NAME,PRODUCT_CODE,TAXONOMY,COLOR,SIZE,salsify:parent_id,salsify:data_inheritance_hierarchy_level_id
+RECORD_ID,RECORD_NAME,ARTICLE_NAME,PRODUCT_CODE,TAXONOMY,COLOR,SIZE,parent_id,level
 OD0000$,Orphan Discobombulator,,OD0000$,200100,,,,master_model
 OD0000$_202500,Orphan Discobombulator,,OD0000$,200100,,,OD0000$,season
 OD0001001+_202500,Orphan Discobombulator Blazing Beige,Orphan Discobombulator Blazing Beige,OD0001001+,200100,Blazing Beige,,OD0000$_202500,article
