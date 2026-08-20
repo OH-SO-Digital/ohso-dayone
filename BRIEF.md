@@ -26,7 +26,18 @@ Three systems are involved:
 ```
 
 The **mapping** (`data/mapping.json`) is the business rule that says *which* images fill *which*
-image slots on a product (e.g. a main image, a gallery, product-listing cards).
+image slots on a product.
+
+### The image slots on System C (what we're filling)
+
+These are the on-store image placements each product can have:
+
+- **`main_image`** — the single primary/hero photo shown on the product page and in search.
+- **`gallery`** — the ordered set of additional photos in the product-page carousel.
+- **`plp_cards`** — the image(s) used on product-listing / category pages (the browse thumbnail).
+
+The mapping defines, per product category, which source images (and in what order) go into each
+of these slots.
 
 ## What you have
 
